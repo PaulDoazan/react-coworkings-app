@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Logo, FormRow } from '../components';
+import { Logo, FormRow, Alert } from '../components';
 import Wrapper from '../assets/wrappers/RegisterPage';
 import { useAppContext } from '../context/appContext';
+
 // global context and useNavigate later
 
 const initialState = {
@@ -35,7 +36,12 @@ export default function Register() {
     const onSubmit = (e) => {
         e.preventDefault();
         const { name, password, isMember } = values;
-        const currentUser = { name, password }
+
+        if (!name || !password) {
+            displayAlert()
+            return
+        }
+        const currentUser = { username: name, password }
         if (isMember) {
             console.log('already a member');
         } else {
@@ -47,6 +53,8 @@ export default function Register() {
             <form className='form' onSubmit={onSubmit}>
                 <Logo />
                 <h3>{values.isMember ? 'Login' : 'Register'}</h3>
+
+                {showAlert && <Alert />}
 
                 <FormRow type='text' name='name' value={values.name} handleChange={handleChange} />
                 <FormRow type='password' name='password' value={values.password} handleChange={handleChange} />
