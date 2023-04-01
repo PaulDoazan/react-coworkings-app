@@ -1,6 +1,10 @@
+import Landing from "./pages/Landing";
+
 function App() {
   return (
-    <h1>Bordeaux - coworkings</h1>
+    <div>
+      <Landing />
+    </div>
   );
 }
 
