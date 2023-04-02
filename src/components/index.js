@@ -4,6 +4,8 @@ import Alert from "./Alert";
 import Navbar from "./Navbar";
 import BigSidebar from "./BigSidebar";
 import SmallSidebar from "./SmallSidebar";
+import SearchContainer from "./SearchContainer";
+import CoworkingsContainer from "./CoworkingsContainer";
 
 export {
     Logo,
@@ -11,5 +13,7 @@ export {
     Alert,
     Navbar,
     BigSidebar,
-    SmallSidebar
+    SmallSidebar,
+    SearchContainer,
+    CoworkingsContainer
 }

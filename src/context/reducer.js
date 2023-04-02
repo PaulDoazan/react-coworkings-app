@@ -17,6 +17,8 @@ import {
     CREATE_COWORKING_BEGIN,
     CREATE_COWORKING_SUCCESS,
     CREATE_COWORKING_ERROR,
+    GET_COWORKINGS_SUCCESS,
+    GET_COWORKINGS_BEGIN
 } from './actions';
 
 import { initialState } from './appContext';
@@ -168,6 +170,19 @@ const reducer = (state, action) => {
             showAlert: true,
             alertType: 'danger',
             alertText: action.payload.msg,
+        };
+    }
+
+    if (action.type === GET_COWORKINGS_BEGIN) {
+        return { ...state, isLoading: true, showAlert: false };
+    }
+    if (action.type === GET_COWORKINGS_SUCCESS) {
+        return {
+            ...state,
+            isLoading: false,
+            coworkings: action.payload.coworkings,
+            totalCoworkings: action.payload.totalCoworkings,
+            numOfPages: action.payload.numOfPages,
         };
     }
 

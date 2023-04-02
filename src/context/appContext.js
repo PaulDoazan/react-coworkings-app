@@ -1,4 +1,4 @@
-import React, { useReducer, useContext } from 'react';
+import React, { useReducer, useContext, useEffect } from 'react';
 import axios from 'axios';
 import reducer from './reducer';
 
@@ -21,6 +21,8 @@ import {
     CREATE_COWORKING_BEGIN,
     CREATE_COWORKING_SUCCESS,
     CREATE_COWORKING_ERROR,
+    GET_COWORKINGS_SUCCESS,
+    GET_COWORKINGS_BEGIN
 } from './actions'
 
 const token = localStorage.getItem('token');
@@ -44,7 +46,11 @@ const initialState = {
     addressPostCode: '',
     priceHour: '',
     priceDay: '',
-    priceMonth: ''
+    priceMonth: '',
+    coworkings: [],
+    totalCoworkings: 0,
+    numOfPages: 1,
+    page: 1
 };
 
 const AppContext = React.createContext();
@@ -216,10 +222,44 @@ const AppProvider = ({ children }) => {
         clearAlert();
     };
 
+    const getCoworkings = async () => {
+        let url = `http://localhost:3001/api/coworkings`
+
+        dispatch({ type: GET_COWORKINGS_BEGIN })
+        try {
+            const { data } = await axios.get(url)
+            console.log(data)
+            const { coworkings, totalCoworkings, numOfPages } = data
+            dispatch({
+                type: GET_COWORKINGS_SUCCESS,
+                payload: {
+                    coworkings,
+                    totalCoworkings,
+                    numOfPages,
+                },
+            })
+        } catch (error) {
+            console.log(error.response)
+            logoutUser()
+        }
+        clearAlert()
+    }
+
+    const setEditCoworking = (id) => {
+        console.log(`set edit coworking : ${id}`)
+    }
+    const deleteCoworking = (id) => {
+        console.log(`delete : ${id}`)
+    }
+
+    useEffect(() => {
+        getCoworkings()
+    }, [])
+
     return (
         <AppContext.Provider
             value={{
-                ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleChange, clearValues, createCoworking
+                ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleChange, clearValues, createCoworking, getCoworkings, setEditCoworking, deleteCoworking
             }}
         >
             {children}

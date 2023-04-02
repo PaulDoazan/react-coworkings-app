@@ -338,3 +338,7 @@ ul {
   content:" *";
   color: red;
 }
+
+.prices {
+  color: var(--grey-900)
+}

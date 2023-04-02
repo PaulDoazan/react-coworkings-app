@@ -40,6 +40,9 @@ const Wrapper = styled.article`
       color: var(--grey-400);
       letter-spacing: var(--letterSpacing);
     }
+    .prices {
+      color: var(--grey-900);
+    }
   }
   .pending {
     background: #fcefc7;
