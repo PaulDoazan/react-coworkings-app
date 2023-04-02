@@ -3,6 +3,7 @@ import { useAppContext } from '../../context/appContext';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
 const AddCoworking = () => {
     const {
+        isLoading,
         isEditing,
         showAlert,
         displayAlert,
@@ -17,17 +18,22 @@ const AddCoworking = () => {
         priceDay,
         priceMonth,
         handleChange,
-        clearValues
+        clearValues,
+        createCoworking
     } = useAppContext();
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!coworkingName || !coworkingSuperficy || !coworkingCapacity) {
-            displayAlert();
+        // if (!coworkingName || !coworkingSuperficy || !coworkingCapacity) {
+        //     displayAlert();
+        //     return;
+        // }
+        if (isEditing) {
+            // eventually editCoworking()
             return;
         }
-        console.log('create coworking');
+        createCoworking();
     };
 
     const handleCoworkingInput = (e) => {
@@ -115,6 +121,7 @@ const AddCoworking = () => {
                             className='btn btn-block submit-btn'
                             type='submit'
                             onClick={handleSubmit}
+                            disabled={isLoading}
                         >
                             submit
                         </button>

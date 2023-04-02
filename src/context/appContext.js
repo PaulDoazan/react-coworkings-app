@@ -17,7 +17,10 @@ import {
     TOGGLE_SIDEBAR,
     LOGOUT_USER,
     HANDLE_CHANGE,
-    CLEAR_VALUES
+    CLEAR_VALUES,
+    CREATE_COWORKING_BEGIN,
+    CREATE_COWORKING_SUCCESS,
+    CREATE_COWORKING_ERROR,
 } from './actions'
 
 const token = localStorage.getItem('token');
@@ -176,10 +179,47 @@ const AppProvider = ({ children }) => {
         dispatch({ type: CLEAR_VALUES })
     }
 
+    const createCoworking = async () => {
+        dispatch({ type: CREATE_COWORKING_BEGIN });
+        try {
+            console.log(state)
+            const { coworkingName, coworkingSuperficy, coworkingCapacity, addressStreet, addressNumber, addressPostCode, priceHour, priceDay, priceMonth } = state;
+
+            await axios.post('http://localhost:3001/api/coworkings', {
+                name: coworkingName,
+                superficy: coworkingSuperficy,
+                capacity: coworkingCapacity,
+                address: {
+                    number: addressNumber,
+                    street: addressStreet,
+                    postCode: addressPostCode,
+                    city: 'Bordeaux'
+                },
+                price: {
+                    hour: priceHour,
+                    day: priceDay,
+                    month: priceMonth
+                },
+            });
+            dispatch({
+                type: CREATE_COWORKING_SUCCESS,
+            });
+            // call function instead clearValues()
+            dispatch({ type: CLEAR_VALUES });
+        } catch (error) {
+            if (error.response.status === 401) return;
+            dispatch({
+                type: CREATE_COWORKING_ERROR,
+                payload: { msg: error.response.data.message },
+            });
+        }
+        clearAlert();
+    };
+
     return (
         <AppContext.Provider
             value={{
-                ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleChange, clearValues
+                ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleChange, clearValues, createCoworking
             }}
         >
             {children}

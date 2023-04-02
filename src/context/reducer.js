@@ -13,7 +13,10 @@ import {
     TOGGLE_SIDEBAR,
     LOGOUT_USER,
     HANDLE_CHANGE,
-    CLEAR_VALUES
+    CLEAR_VALUES,
+    CREATE_COWORKING_BEGIN,
+    CREATE_COWORKING_SUCCESS,
+    CREATE_COWORKING_ERROR,
 } from './actions';
 
 import { initialState } from './appContext';
@@ -144,6 +147,28 @@ const reducer = (state, action) => {
             priceMonth: ''
         };
         return { ...state, ...initialState };
+    }
+
+    if (action.type === CREATE_COWORKING_BEGIN) {
+        return { ...state, isLoading: true };
+    }
+    if (action.type === CREATE_COWORKING_SUCCESS) {
+        return {
+            ...state,
+            isLoading: false,
+            showAlert: true,
+            alertType: 'success',
+            alertText: 'New coworking Created!',
+        };
+    }
+    if (action.type === CREATE_COWORKING_ERROR) {
+        return {
+            ...state,
+            isLoading: false,
+            showAlert: true,
+            alertType: 'danger',
+            alertText: action.payload.msg,
+        };
     }
 
     throw new Error(`no such action : ${action.type}`)
