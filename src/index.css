@@ -333,3 +333,8 @@ ul {
   font-weight: 600;
   letter-spacing: 4px;
 }
+
+.required:after {
+  content:" *";
+  color: red;
+}

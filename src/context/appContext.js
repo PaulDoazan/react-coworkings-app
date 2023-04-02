@@ -7,7 +7,17 @@ import {
     CLEAR_ALERT,
     REGISTER_USER_BEGIN,
     REGISTER_USER_SUCCESS,
-    REGISTER_USER_ERROR
+    REGISTER_USER_ERROR,
+    LOGIN_USER_BEGIN,
+    LOGIN_USER_SUCCESS,
+    LOGIN_USER_ERROR,
+    UPDATE_USER_BEGIN,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_ERROR,
+    TOGGLE_SIDEBAR,
+    LOGOUT_USER,
+    HANDLE_CHANGE,
+    CLEAR_VALUES
 } from './actions'
 
 const token = localStorage.getItem('token');
@@ -19,8 +29,21 @@ const initialState = {
     alertText: '',
     alertType: '',
     user: user ? JSON.parse(user) : null,
-    token: token
+    token: token,
+    showSidebar: false,
+    isEditing: false,
+    editCoworkingId: '',
+    coworkingName: '',
+    coworkingSuperficy: '',
+    coworkingCapacity: '',
+    addressNumber: '',
+    addressStreet: '',
+    addressPostCode: '',
+    priceHour: '',
+    priceDay: '',
+    priceMonth: ''
 };
+
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
@@ -69,7 +92,6 @@ const AppProvider = ({ children }) => {
                 token
             })
         } catch (error) {
-            console.log(error.response);
             dispatch({
                 type: REGISTER_USER_ERROR,
                 payload: { msg: error.response.data.message },
@@ -78,10 +100,86 @@ const AppProvider = ({ children }) => {
         clearAlert();
     };
 
+    const loginUser = async (currentUser) => {
+        dispatch({ type: LOGIN_USER_BEGIN });
+        try {
+            const response = await axios.post('http://localhost:3001/api/users/login', currentUser);
+            const { user, token } = response.data;
+            dispatch({
+                type: LOGIN_USER_SUCCESS,
+                payload: {
+                    user,
+                    token
+                },
+            });
+
+            addUserToLocalStorage({
+                user,
+                token
+            })
+        } catch (error) {
+            dispatch({
+                type: LOGIN_USER_ERROR,
+                payload: { msg: error.response.data.message },
+            });
+        }
+        clearAlert();
+    };
+
+    const logoutUser = () => {
+        dispatch({ type: LOGOUT_USER })
+        removeUserFromLocalStorage()
+    }
+
+    const toggleSidebar = () => {
+        dispatch({ type: TOGGLE_SIDEBAR });
+    };
+
+    const updateUser = async (currentUser) => {
+        try {
+            const { data } = await axios.put(`http://localhost:3001/api/users/${currentUser.id}`, currentUser, {
+                headers: {
+                    Authorization: `Bearer ${state.token}`,
+                },
+            });
+
+            dispatch({
+                type: UPDATE_USER_SUCCESS,
+                payload: {
+                    user: data.user,
+                    token: data.token
+                },
+            });
+
+            removeUserFromLocalStorage();
+            addUserToLocalStorage({
+                user: data.user,
+                token: data.token
+            })
+        } catch (error) {
+            dispatch({
+                type: UPDATE_USER_ERROR,
+                payload: { msg: error.response.data.message },
+            });
+        }
+        clearAlert();
+    };
+
+    const handleChange = ({ name, value }) => {
+        dispatch({
+            type: HANDLE_CHANGE,
+            payload: { name, value },
+        })
+    }
+
+    const clearValues = () => {
+        dispatch({ type: CLEAR_VALUES })
+    }
+
     return (
         <AppContext.Provider
             value={{
-                ...state, displayAlert, registerUser
+                ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleChange, clearValues
             }}
         >
             {children}
@@ -89,8 +187,8 @@ const AppProvider = ({ children }) => {
     );
 };
 // make sure use
-export const useAppContext = () => {
+const useAppContext = () => {
     return useContext(AppContext);
 };
 
-export { AppProvider };
+export { AppProvider, initialState, useAppContext };
