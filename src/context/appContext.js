@@ -76,6 +76,7 @@ const AppProvider = ({ children }) => {
     const addUserToLocalStorage = ({ user, token }) => {
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('token', token);
+        console.log(localStorage.getItem('token'), token)
     };
 
     const removeUserFromLocalStorage = () => {
@@ -188,7 +189,9 @@ const AppProvider = ({ children }) => {
     const createCoworking = async () => {
         dispatch({ type: CREATE_COWORKING_BEGIN });
         try {
-            console.log(state)
+            const config = {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            };
             const { coworkingName, coworkingSuperficy, coworkingCapacity, addressStreet, addressNumber, addressPostCode, priceHour, priceDay, priceMonth } = state;
 
             await axios.post('http://localhost:3001/api/coworkings', {
@@ -205,8 +208,8 @@ const AppProvider = ({ children }) => {
                     hour: priceHour,
                     day: priceDay,
                     month: priceMonth
-                },
-            });
+                }
+            }, config);
             dispatch({
                 type: CREATE_COWORKING_SUCCESS,
             });
@@ -229,13 +232,14 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await axios.get(url)
             console.log(data)
-            const { coworkings, totalCoworkings, numOfPages } = data
+            // const { coworkings, totalCoworkings, numOfPages } = data
+            const coworkings = data.data
             dispatch({
                 type: GET_COWORKINGS_SUCCESS,
                 payload: {
                     coworkings,
-                    totalCoworkings,
-                    numOfPages,
+                    // totalCoworkings,
+                    // numOfPages,
                 },
             })
         } catch (error) {

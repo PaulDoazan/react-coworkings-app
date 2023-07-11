@@ -13,7 +13,8 @@ const CoworkingsContainer = () => {
     if (isLoading) {
         return <Loading center />;
     }
-    if (coworkings.length === 0) {
+
+    if (!coworkings || coworkings.length === 0) {
         return (
             <Wrapper>
                 <h2>No coworkings to display...</h2>
