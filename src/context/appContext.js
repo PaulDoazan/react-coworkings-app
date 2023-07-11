@@ -209,7 +209,11 @@ const AppProvider = ({ children }) => {
                     day: priceDay,
                     month: priceMonth
                 }
-            }, config);
+            }, {
+                headers: {
+                    Authorization: `Bearer ${state.token}`,
+                },
+            });
             dispatch({
                 type: CREATE_COWORKING_SUCCESS,
             });
